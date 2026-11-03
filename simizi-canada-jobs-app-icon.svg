@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Simizi Canada Jobs app logo</title>
+  <desc id="desc">Red and white Canadian flag styled as a rounded app icon with a modern banner.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#c3c7cb"/>
+      <stop offset="100%" stop-color="#9aa0a6"/>
+    </linearGradient>
+    <linearGradient id="flagRed" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e11b2d"/>
+      <stop offset="100%" stop-color="#bf1324"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="220" fill="url(#bg)"/>
+  <rect x="40" y="40" width="432" height="432" rx="180" fill="#f5f5f5"/>
+  <rect x="40" y="40" width="432" height="216" rx="180" fill="url(#flagRed)"/>
+  <g fill="#ffffff">
+    <rect x="40" y="40" width="432" height="216" rx="180" fill="none"/>
+    <rect x="40" y="40" width="432" height="216" rx="180" fill="rgba(255,255,255,0.04)"/>
+    <path d="M256 72 L286 148 L364 148 L298 192 L324 270 L256 220 L188 270 L214 192 L148 148 L226 148 Z"/>
+  </g>
+  <g>
+    <path d="M256 152 L282 232 L362 232 L294 276 L322 352 L256 306 L190 352 L218 276 L150 232 L230 232 Z" fill="#ffffff"/>
+  </g>
+  <rect x="66" y="300" width="380" height="120" rx="52" fill="#d5162d"/>
+  <text x="256" y="380" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700" fill="#ffffff" letter-spacing="2">CANADA</text>
+</svg>
