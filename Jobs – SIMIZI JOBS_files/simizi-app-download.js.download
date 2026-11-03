@@ -1,0 +1,115 @@
+(function () {
+    function isAndroid() {
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        return /android/i.test(ua) && !/iphone|ipad|ipod/i.test(ua);
+    }
+
+    function isIOS() {
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        return /iphone|ipad|ipod/i.test(ua);
+    }
+
+    function getStorageValue(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function setStorageValue(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch (e) {}
+    }
+
+    function showBanner() {
+        var banner = document.getElementById('simizi-install-banner');
+        if (!banner) {
+            return;
+        }
+
+        banner.style.display = 'block';
+        window.setTimeout(function () {
+            banner.classList.add('simizi-install-visible');
+        }, 10);
+    }
+
+    function hideBanner() {
+        var banner = document.getElementById('simizi-install-banner');
+        if (!banner) {
+            return;
+        }
+
+        banner.classList.remove('simizi-install-visible');
+        window.setTimeout(function () {
+            banner.style.display = 'none';
+        }, 220);
+    }
+
+    function shouldShowPopup() {
+        var dismissedUntil = Number(getStorageValue('simizi_app_popup_dismissed_until') || 0);
+        var interacted = getStorageValue('simizi_app_popup_interacted') === '1';
+        var now = Date.now();
+
+        if (interacted) {
+            return false;
+        }
+
+        if (dismissedUntil > now) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function handleDismissal() {
+        var expiresAt = Date.now() + (7 * 24 * 60 * 60 * 1000);
+        setStorageValue('simizi_app_popup_dismissed_until', String(expiresAt));
+        hideBanner();
+    }
+
+    function handleInstallClick() {
+        setStorageValue('simizi_app_popup_interacted', '1');
+        var dismissedUntil = Date.now() + (7 * 24 * 60 * 60 * 1000);
+        setStorageValue('simizi_app_popup_dismissed_until', String(dismissedUntil));
+    }
+
+    function initPopup() {
+        if (isIOS()) {
+            return;
+        }
+
+        if (!isAndroid()) {
+            return;
+        }
+
+        if (!shouldShowPopup()) {
+            return;
+        }
+
+        window.setTimeout(function () {
+            showBanner();
+        }, 2000);
+
+        var closeButton = document.querySelector('.simizi-install-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', function () {
+                handleDismissal();
+            });
+        }
+
+        var installButton = document.querySelector('.simizi-install-button');
+        if (installButton) {
+            installButton.addEventListener('click', function () {
+                handleInstallClick();
+            });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPopup);
+    } else {
+        initPopup();
+    }
+})();

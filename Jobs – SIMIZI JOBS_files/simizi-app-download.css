@@ -1,0 +1,115 @@
+.simizi-install-banner {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-14px);
+    width: min(92vw, 560px);
+    z-index: 999999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.simizi-install-banner.simizi-install-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.simizi-install-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(13, 92, 190, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 14px 32px rgba(14, 35, 60, 0.15);
+    padding: 12px 14px;
+}
+
+.simizi-install-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.simizi-install-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid rgba(13, 92, 190, 0.12);
+    flex-shrink: 0;
+}
+
+.simizi-install-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.simizi-install-text strong {
+    font-size: 14px;
+    line-height: 1.3;
+    color: #0f2340;
+    letter-spacing: 0.02em;
+}
+
+.simizi-install-text span {
+    font-size: 13px;
+    line-height: 1.35;
+    color: #42546d;
+}
+
+.simizi-install-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.simizi-install-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0d5cbe 0%, #0b3d7d 100%);
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    line-height: 1;
+    box-shadow: 0 8px 16px rgba(13, 92, 190, 0.18);
+}
+
+.simizi-install-button:hover,
+.simizi-install-button:focus {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.simizi-install-close {
+    background: transparent;
+    border: none;
+    color: #42546d;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+@media (max-width: 600px) {
+    .simizi-install-banner {
+        top: 10px;
+        width: calc(100vw - 20px);
+    }
+
+    .simizi-install-inner {
+        align-items: flex-start;
+        padding: 12px 10px;
+    }
+}

@@ -1,0 +1,388 @@
+.simizi-cv-scanner-wrapper {
+    max-width: 1200px;
+    margin: 32px auto 48px;
+    padding: 0 16px;
+    color: #10233e;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.simizi-cv-scanner {
+    width: 100%;
+}
+
+.simizi-cv-scanner-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.simizi-cv-scanner-eyebrow {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #0d5cbe;
+}
+
+.simizi-cv-scanner-header h2 {
+    margin: 0 0 10px;
+    font-size: clamp(26px, 4vw, 42px);
+    line-height: 1.2;
+    color: #0f2340;
+}
+
+.simizi-cv-scanner-subtitle {
+    max-width: 760px;
+    margin: 0 auto;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #38506c;
+}
+
+.simizi-cv-scanner-card {
+    background: #ffffff;
+    border: 1px solid rgba(17, 86, 164, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 8px 18px rgba(15, 48, 88, 0.04);
+    padding: 20px 18px;
+}
+
+.simizi-cv-upload-box {
+    border: 2px dashed rgba(13, 92, 190, 0.35);
+    background: linear-gradient(135deg, #f5f9ff 0%, #ffffff 100%);
+    border-radius: 16px;
+    padding: 28px 18px;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simizi-cv-upload-box.dragover {
+    border-color: #0d5cbe;
+    box-shadow: 0 10px 22px rgba(13, 92, 190, 0.12);
+}
+
+.simizi-cv-upload-icon {
+    font-size: 42px;
+    margin-bottom: 8px;
+}
+
+.simizi-cv-upload-title {
+    margin: 0 0 8px;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 800;
+    color: #0f2340;
+}
+
+.simizi-cv-upload-drag,
+.simizi-cv-upload-or,
+.simizi-cv-upload-formats,
+.simizi-cv-upload-max-size,
+.simizi-cv-upload-privacy {
+    margin: 0 0 8px;
+    color: #42546d;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.simizi-cv-file-button,
+.simizi-cv-scan-button,
+.simizi-cv-final-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.simizi-cv-file-button {
+    background: #eaf2ff;
+    color: #0d5cbe;
+    padding: 12px 20px;
+    margin: 8px 0 6px;
+    font-size: 14px;
+}
+
+.simizi-cv-file-button:hover,
+.simizi-cv-scan-button:hover,
+.simizi-cv-final-cta:hover {
+    transform: translateY(-1px);
+}
+
+.simizi-cv-selected-file {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: #ecfdf5;
+    border: 1px solid rgba(22, 147, 86, 0.18);
+    border-radius: 12px;
+    color: #0f6b46;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.simizi-cv-selected-file strong {
+    font-size: 13px;
+    word-break: break-word;
+}
+
+.simizi-cv-scan-button {
+    width: 100%;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #0d5cbe 0%, #0d3d7d 100%);
+    color: #ffffff;
+    padding: 16px 20px;
+    font-size: 16px;
+    box-shadow: 0 12px 22px rgba(13, 92, 190, 0.2);
+}
+
+.simizi-cv-scan-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.simizi-cv-loading-panel,
+.simizi-cv-result-panel {
+    margin-top: 24px;
+    background: #ffffff;
+    border: 1px solid rgba(17, 86, 164, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 8px 18px rgba(15, 48, 88, 0.04);
+    padding: 22px 18px;
+}
+
+.simizi-cv-loading-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.simizi-cv-loading-header h3 {
+    margin: 0;
+    font-size: clamp(22px, 3vw, 30px);
+    color: #0f2340;
+}
+
+.simizi-cv-loading-dots {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d93025 0%, #f9a825 50%, #3cb371 100%);
+    display: block;
+    position: relative;
+    animation: pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+}
+
+.simizi-cv-progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #edf3fb;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.simizi-cv-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #d93025 0%, #f28c28 30%, #f7c948 65%, #2e9d57 100%);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+}
+
+.simizi-cv-progress-text {
+    text-align: center;
+    font-weight: 800;
+    color: #0d5cbe;
+    margin-bottom: 14px;
+}
+
+.simizi-cv-stages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.simizi-cv-stages li {
+    background: #f6f9fd;
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: #3b5372;
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.simizi-cv-stages li.active {
+    opacity: 1;
+    background: #eaf3ff;
+    color: #0f2340;
+}
+
+.simizi-cv-result-panel {
+    display: block;
+}
+
+.simizi-cv-final-results {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.simizi-cv-result-head {
+    text-align: center;
+    padding-top: 6px;
+}
+
+.simizi-cv-result-score {
+    font-size: clamp(42px, 7vw, 72px);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    font-weight: 800;
+    color: #0f2340;
+    margin-bottom: 8px;
+}
+
+.simizi-cv-result-classification {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+}
+
+.simizi-cv-result-head p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #39506b;
+}
+
+.simizi-cv-score-line-wrap {
+    margin: 18px 0 12px;
+}
+
+.simizi-cv-score-line {
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: #edf3fb;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba(17, 86, 164, 0.08);
+}
+
+.simizi-cv-score-line span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    width: 0;
+    transition: width 0.45s ease;
+}
+
+.simizi-cv-label {
+    display: block;
+    margin: 0 0 18px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4f637e;
+    text-align: center;
+}
+
+.simizi-cv-divider {
+    height: 1px;
+    background: rgba(16, 35, 62, 0.12);
+    margin: 20px 0;
+}
+
+.simizi-cv-result-section {
+    padding: 0;
+}
+
+.simizi-cv-result-section h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0f2340;
+}
+
+.simizi-cv-list-check,
+.simizi-cv-list-bullet {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.simizi-cv-list-check li,
+.simizi-cv-list-bullet li {
+    margin: 0 0 10px;
+    line-height: 1.6;
+    color: #2a3f5d;
+    font-size: 15px;
+    padding-left: 0;
+}
+
+.simizi-cv-final-cta {
+    display: flex;
+    width: 100%;
+    background: linear-gradient(135deg, #0d5cbe 0%, #0d3b7d 100%);
+    color: #ffffff;
+    padding: 16px 28px;
+    font-size: 16px;
+    box-shadow: 0 14px 24px rgba(13, 92, 190, 0.18);
+    text-align: center;
+    margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+    .simizi-cv-scanner-subtitle {
+        font-size: 16px;
+    }
+
+    .simizi-cv-upload-box {
+        padding: 22px 14px;
+    }
+
+    .simizi-cv-primary-button,
+    .simizi-cv-scan-button,
+    .simizi-cv-final-cta {
+        width: 100%;
+    }
+
+    .simizi-cv-selected-file {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .simizi-cv-result-score {
+        font-size: clamp(48px, 20vw, 72px);
+    }
+
+    .simizi-cv-result-head h3 {
+        font-size: 20px;
+    }
+
+    .simizi-cv-result-head p {
+        font-size: 15px;
+    }
+}

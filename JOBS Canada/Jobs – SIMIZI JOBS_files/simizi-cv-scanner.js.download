@@ -1,0 +1,418 @@
+(function () {
+    var state = {
+        selectedFile: null,
+        isScanning: false,
+        activeStage: 0,
+        progress: 0,
+    };
+
+    function getFileInput() {
+        return document.getElementById('simizi-cv-file-input');
+    }
+
+    function getUploadBox() {
+        return document.getElementById('simizi-cv-upload-box');
+    }
+
+    function getSelectedFileArea() {
+        return document.getElementById('simizi-cv-selected-file');
+    }
+
+    function getScanButton() {
+        return document.getElementById('simizi-cv-scan-button');
+    }
+
+    function getLoadingPanel() {
+        return document.getElementById('simizi-cv-loading-panel');
+    }
+
+    function getResultPanel() {
+        return document.getElementById('simizi-cv-result-panel');
+    }
+
+    function getResultContainer() {
+        return document.getElementById('simizi-cv-final-results');
+    }
+
+    function getProgressFill() {
+        return document.getElementById('simizi-cv-progress-fill');
+    }
+
+    function getProgressText() {
+        return document.getElementById('simizi-cv-progress-text');
+    }
+
+    function ensureArray(value, fallback) {
+        if (Array.isArray(value) && value.length) {
+            return value.slice(0, 4);
+        }
+        return fallback;
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function getScoreMeta(score) {
+        var numericScore = Number(score);
+        if (!isFinite(numericScore)) {
+            numericScore = 0;
+        }
+
+        var safeScore = Math.max(0, Math.min(100, numericScore));
+
+        if (safeScore < 50) {
+            return {
+                score: safeScore,
+                label: 'POOR CV',
+                description: 'Your CV needs significant improvement to present your experience in a stronger professional format.',
+                color: '#d93025',
+                fill: 'linear-gradient(90deg, #d93025 0%, #ef4444 100%)'
+            };
+        }
+
+        if (safeScore < 70) {
+            return {
+                score: safeScore,
+                label: 'NEEDS IMPROVEMENT',
+                description: 'Your CV has potential, but it still needs clearer structure and stronger presentation.',
+                color: '#f59e0b',
+                fill: 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)'
+            };
+        }
+
+        if (safeScore < 85) {
+            return {
+                score: safeScore,
+                label: 'GOOD CV',
+                description: 'Your CV is strong and professionally presented, with a few improvements to maximize impact.',
+                color: '#22c55e',
+                fill: 'linear-gradient(90deg, #84cc16 0%, #22c55e 100%)'
+            };
+        }
+
+        return {
+            score: safeScore,
+            label: 'STRONG CV',
+            description: 'Your CV is strong, polished and well-positioned for professional opportunities.',
+            color: '#16a34a',
+            fill: 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)'
+        };
+    }
+
+    function buildFinalResultMarkup(data) {
+        var score = Number(data && data.score);
+        if (!isFinite(score)) {
+            score = 0;
+        }
+
+        var meta = getScoreMeta(score);
+        var summary = data && data.summary ? data.summary : meta.description;
+        var strengths = ensureArray(data && data.strengths, [
+            'Professional structure detected',
+            'Work experience detected',
+            'Skills section detected',
+            'Education detected'
+        ]);
+        var improvements = ensureArray(data && data.improvements, [
+            'Strengthen your professional summary',
+            'Improve work experience descriptions',
+            'Organize your skills more clearly',
+            'Improve formatting consistency'
+        ]);
+        var recommendations = ensureArray(data && data.recommendations, [
+            'Add a concise professional summary.',
+            'Use achievement-focused experience descriptions.',
+            'Organize skills according to the target role.',
+            'Keep formatting consistent.'
+        ]);
+
+        var strengthHtml = strengths.map(function (item) {
+            return '<li>✓ ' + escapeHtml(item) + '</li>';
+        }).join('');
+
+        var improvementHtml = improvements.map(function (item) {
+            return '<li>• ' + escapeHtml(item) + '</li>';
+        }).join('');
+
+        var recommendationHtml = recommendations.map(function (item) {
+            return '<li>• ' + escapeHtml(item) + '</li>';
+        }).join('');
+
+        return [
+            '<div class="simizi-cv-result-head">',
+            '   <div class="simizi-cv-result-score">' + Math.round(meta.score) + '%</div>',
+            '   <div class="simizi-cv-result-classification" style="color:' + meta.color + ';">' + meta.label + '</div>',
+            '   <p>' + escapeHtml(summary) + '</p>',
+            '</div>',
+            '<div class="simizi-cv-score-line-wrap">',
+            '   <div class="simizi-cv-score-line" aria-label="CV score ' + Math.round(meta.score) + ' percent"><span style="width:' + Math.round(meta.score) + '%; background:' + meta.fill + ';"></span></div>',
+            '</div>',
+            '<div class="simizi-cv-label">SIMIZI JOBS CV ASSESSMENT</div>',
+            '<section class="simizi-cv-result-section">',
+            '   <h4>WHAT WE FOUND</h4>',
+            '   <ul class="simizi-cv-list-check">' + strengthHtml + '</ul>',
+            '</section>',
+            '<div class="simizi-cv-divider"></div>',
+            '<section class="simizi-cv-result-section">',
+            '   <h4>AREAS TO IMPROVE</h4>',
+            '   <ul class="simizi-cv-list-bullet">' + improvementHtml + '</ul>',
+            '</section>',
+            '<div class="simizi-cv-divider"></div>',
+            '<section class="simizi-cv-result-section">',
+            '   <h4>RECOMMENDED IMPROVEMENTS</h4>',
+            '   <ul class="simizi-cv-list-bullet">' + recommendationHtml + '</ul>',
+            '</section>',
+            '<div class="simizi-cv-divider"></div>',
+            '<a href="https://simizijob.co.ke/resume-builder/" class="simizi-cv-final-cta">START CREATING MY CV →</a>',
+            '</div>'
+        ].join('');
+    }
+
+    function updateSelectedFile() {
+        var selectedFile = state.selectedFile;
+        var selectedFileArea = getSelectedFileArea();
+        var fileNameEl = document.getElementById('simizi-cv-file-name');
+
+        if (!selectedFile) {
+            selectedFileArea.style.display = 'none';
+            getScanButton().disabled = true;
+            return;
+        }
+
+        selectedFileArea.style.display = 'flex';
+        fileNameEl.textContent = selectedFile.name;
+        getScanButton().disabled = false;
+    }
+
+    function validateFile(file) {
+        if (!file) {
+            return 'Please choose a CV file.';
+        }
+
+        var allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        var allowedExtensions = ['pdf', 'doc', 'docx'];
+        var fileExt = file.name.split('.').pop().toLowerCase();
+
+        if (allowedExtensions.indexOf(fileExt) === -1) {
+            return 'Unsupported file format. Please upload PDF, DOC or DOCX.';
+        }
+
+        if (allowedTypes.indexOf(file.type) === -1 && fileExt !== 'pdf' && fileExt !== 'doc' && fileExt !== 'docx') {
+            return 'Unsupported file format. Please upload PDF, DOC or DOCX.';
+        }
+
+        if (file.size > simiziCvScannerData.maxFileSize) {
+            return 'File size exceeds the allowed limit. Please upload a smaller CV.';
+        }
+
+        return '';
+    }
+
+    function triggerFilePicker() {
+        getFileInput().click();
+    }
+
+    function setFile(file) {
+        var message = validateFile(file);
+
+        if (message) {
+            window.alert(message);
+            return;
+        }
+
+        state.selectedFile = file;
+        updateSelectedFile();
+    }
+
+    function formatStageText() {
+        var stages = document.querySelectorAll('#simizi-cv-stages li');
+        stages.forEach(function (stage, index) {
+            stage.classList.toggle('active', index === state.activeStage);
+        });
+    }
+
+    function runAnalysisSteps() {
+        var stages = document.querySelectorAll('#simizi-cv-stages li');
+        var progressValues = [12, 30, 49, 74, 100];
+
+        var interval = window.setInterval(function () {
+            if (state.activeStage < stages.length - 1) {
+                state.activeStage += 1;
+            }
+
+            state.progress = progressValues[state.activeStage] || 100;
+            var progressFill = getProgressFill();
+            var progressText = getProgressText();
+            progressFill.style.width = state.progress + '%';
+            progressText.textContent = state.progress + '%';
+            formatStageText();
+
+            if (state.progress >= 100) {
+                window.clearInterval(interval);
+                window.setTimeout(function () {
+                    getLoadingPanel().style.display = 'none';
+                    showResults();
+                }, 300);
+            }
+        }, 420);
+    }
+
+    function showResults(data) {
+        var container = getResultContainer();
+        if (!container) {
+            return;
+        }
+
+        getResultPanel().style.display = 'block';
+        container.innerHTML = buildFinalResultMarkup(data);
+    }
+
+    function handleScan() {
+        if (!state.selectedFile || state.isScanning) {
+            return;
+        }
+
+        state.isScanning = true;
+        state.activeStage = 0;
+        state.progress = 0;
+
+        getLoadingPanel().style.display = 'block';
+        getResultPanel().style.display = 'none';
+        getProgressFill().style.width = '0%';
+        getProgressText().textContent = '0%';
+
+        var stages = document.querySelectorAll('#simizi-cv-stages li');
+        stages.forEach(function (stage) {
+            stage.classList.remove('active');
+        });
+
+        var firstStage = document.querySelector('#simizi-cv-stages li');
+        if (firstStage) {
+            firstStage.classList.add('active');
+        }
+
+        var formData = new FormData();
+        formData.append('action', 'simizi_cv_scanner_upload');
+        formData.append('nonce', simiziCvScannerData.nonce);
+        formData.append('cv', state.selectedFile);
+
+        fetch(simiziCvScannerData.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData,
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (payload) {
+                var resultData = {
+                    score: 0,
+                    summary: 'Your CV has been successfully reviewed.',
+                    strengths: [
+                        'Professional structure detected',
+                        'Work experience detected',
+                        'Skills section detected',
+                        'Education detected'
+                    ],
+                    improvements: [
+                        'Strengthen your professional summary',
+                        'Improve work experience descriptions',
+                        'Organize your skills more clearly',
+                        'Improve formatting consistency'
+                    ],
+                    recommendations: [
+                        'Add a concise professional summary.',
+                        'Use achievement-focused experience descriptions.',
+                        'Organize skills according to the target role.',
+                        'Keep formatting consistent.'
+                    ]
+                };
+
+                if (payload && payload.success && payload.data) {
+                    resultData.score = Number(payload.data.score) || 0;
+                    resultData.summary = payload.data.summary || resultData.summary;
+                    resultData.strengths = ensureArray(payload.data.strengths, resultData.strengths);
+                    resultData.improvements = ensureArray(payload.data.improvements, resultData.improvements);
+                    resultData.recommendations = ensureArray(payload.data.recommendations, resultData.recommendations);
+                }
+
+                getLoadingPanel().style.display = 'none';
+                showResults(resultData);
+                state.isScanning = false;
+            })
+            .catch(function () {
+                getLoadingPanel().style.display = 'none';
+                showResults({
+                    score: 0,
+                    summary: 'Your CV has been successfully reviewed.',
+                    strengths: [
+                        'Professional structure detected',
+                        'Work experience detected',
+                        'Skills section detected',
+                        'Education detected'
+                    ],
+                    improvements: [
+                        'Strengthen your professional summary',
+                        'Improve work experience descriptions',
+                        'Organize your skills more clearly',
+                        'Improve formatting consistency'
+                    ],
+                    recommendations: [
+                        'Add a concise professional summary.',
+                        'Use achievement-focused experience descriptions.',
+                        'Organize skills according to the target role.',
+                        'Keep formatting consistent.'
+                    ]
+                });
+                state.isScanning = false;
+            });
+
+        runAnalysisSteps();
+    }
+
+    function bindEvents() {
+        var triggerButton = document.getElementById('simizi-cv-trigger-button');
+        var uploadBox = getUploadBox();
+        var input = getFileInput();
+        var scanButton = getScanButton();
+
+        triggerButton.addEventListener('click', triggerFilePicker);
+        input.addEventListener('change', function (event) {
+            var file = event.target.files && event.target.files[0];
+            if (file) {
+                setFile(file);
+            }
+        });
+
+        uploadBox.addEventListener('dragover', function (event) {
+            event.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', function () {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', function (event) {
+            event.preventDefault();
+            uploadBox.classList.remove('dragover');
+            var file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+            if (file) {
+                setFile(file);
+            }
+        });
+
+        scanButton.addEventListener('click', handleScan);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        bindEvents();
+        updateSelectedFile();
+    });
+})();
